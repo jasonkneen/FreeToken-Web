@@ -45,9 +45,9 @@ fi
 say "uv $($UV --version | awk '{print $2}')"
 
 metal_ready() {
-  [ -f "$1/pyproject.toml" ] \
-    && grep -q "platform_system == 'Linux'" "$1/pyproject.toml" \
-    && grep -q 'torch>=2.11,<2.12; platform_system' "$1/pyproject.toml"
+  local pp="$1/pyproject.toml"
+  [ -f "$pp" ] || return 1
+  grep -Eq "platform_system == ['\"]Linux['\"]" "$pp" && grep -Eq "torch[^;]*;[[:space:]]*platform_system" "$pp"
 }
 
 clone_engine() {
