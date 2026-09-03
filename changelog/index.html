@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FreeToken Changelog | FlashML</title>
+    <meta name="description" content="FreeToken release notes — what changed in each version of the FreeToken desktop app and engine. FreeToken 更新日志。" />
+    <link rel="canonical" href="https://www.flashml.ai/changelog/" />
+    <meta property="og:title" content="FreeToken Changelog" />
+    <meta property="og:description" content="What changed in each FreeToken release." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.flashml.ai/changelog/" />
+    <meta property="og:site_name" content="FlashML" />
+    <meta property="og:image" content="https://www.flashml.ai/assets/icon.png" />
+    <link rel="icon" type="image/svg+xml" href="../assets/f-icon.svg" />
+    <link rel="icon" type="image/png" sizes="128x128" href="../assets/icon-128.png" />
+    <link rel="apple-touch-icon" href="../assets/icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" />
+    <style>
+      /* Same tokens as the download page (index.html documents where they come from). */
+      :root {
+        color-scheme: dark;
+        scrollbar-gutter: stable both-edges;
+        --bg: #14171c;
+        --surface: #1b1f27;
+        --surface-2: #232830;
+        --surface-3: #2e343e;
+        --border: rgba(255, 255, 255, 0.07);
+        --border-2: #2c323c;
+        --text: #dde2e9;
+        --text-2: #a8b0bd;
+        --text-3: #7c8492;
+        --text-4: #5b6371;
+        --accent: #58a6f0;
+        --success: #3cb98f;
+        --warn: #e5c07b;
+        --danger: #e06c75;
+        --mono: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", "Noto Sans SC", monospace;
+        --sans: "Rubik", "Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei",
+                ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+
+      * { box-sizing: border-box; letter-spacing: 0; }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: start center;
+        padding: 24px;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background:
+          radial-gradient(circle at 50% 30%, rgba(88, 166, 240, 0.10), transparent 55%),
+          radial-gradient(circle at 26% 12%, rgba(88, 166, 240, 0.12), transparent 34rem),
+          radial-gradient(circle at 74% 10%, rgba(60, 185, 143, 0.07), transparent 30rem);
+      }
+
+      a { color: inherit; text-decoration: none; }
+
+      .window {
+        width: min(760px, 100%);
+        overflow: hidden;
+        border: 1px solid var(--border-2);
+        border-radius: 10px;
+        background: var(--surface);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+      }
+
+      .titlebar {
+        height: 38px;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        padding: 0 14px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-3);
+        font-size: 11px;
+      }
+      .dots { display: flex; gap: 7px; }
+      .dot { width: 11px; height: 11px; border-radius: 999px; }
+      .red { background: var(--danger); }
+      .yellow { background: var(--warn); }
+      .green { background: var(--success); }
+      .title { display: inline-flex; align-items: center; gap: 8px; letter-spacing: 0.04em; }
+      .title::before {
+        content: "";
+        width: 6px; height: 6px;
+        border-radius: 2px;
+        background: var(--accent);
+      }
+      .lang { justify-self: end; display: inline-flex; gap: 2px; }
+      .lang-btn {
+        appearance: none;
+        border: 0;
+        background: transparent;
+        color: var(--text-4);
+        font-size: 11px;
+        line-height: 1;
+        padding: 4px 7px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: color .15s ease, background .15s ease;
+      }
+      .lang-btn:hover { color: var(--text-2); }
+      .lang-btn.active {
+        color: var(--accent);
+        background: color-mix(in srgb, var(--accent) 12%, transparent);
+      }
+
+      .content { padding: 44px 40px 40px; }
+
+      .head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+      }
+      h1 {
+        margin: 0;
+        color: #f0f2f5;
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+      .back { color: var(--text-3); font-size: 13px; transition: color .15s ease; }
+      .back:hover { color: var(--text); }
+
+      .badge.stable {
+        color: var(--success);
+        background: color-mix(in srgb, var(--success) 12%, transparent);
+      }
+      .toc a.pre { color: var(--text-4); }
+      .toc a.pre:hover { color: var(--text-2); }
+
+      .status {
+        margin: 40px 0;
+        color: var(--text-3);
+        font-size: 14px;
+        text-align: center;
+      }
+      .status a { color: var(--accent); }
+      .status[hidden] { display: none; }
+
+      /* One release = one entry on a left rail. The rail is the timeline; the dot marks the entry
+         and turns accent for the newest. */
+      .list { list-style: none; margin: 0; padding: 0; }
+      .release {
+        position: relative;
+        padding: 28px 0 28px 28px;
+        border-left: 2px solid var(--border-2);
+      }
+      /* The dot hangs off the header row so it is centred on the version text whatever the row's
+         height. Horizontally it is placed by layout, not transform: the window is centred, so
+         its left edge is often on a fraction of a pixel, and a layout-positioned box snaps to
+         device pixels the same way the rail (a border) does, while a translated one does not —
+         that mismatch is a visible 1px offset. Rail centre is 1px left of the padding edge =
+         29px left of .meta; half of the 12px dot puts its left edge at -35px. */
+      .meta::before {
+        content: "";
+        position: absolute;
+        left: -35px;
+        top: 50%;
+        width: 12px; height: 12px;
+        transform: translateY(-50%);
+        border-radius: 999px;
+        background: var(--surface-3);
+        border: 1px solid var(--border-2);
+        transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+      }
+      .release:last-child { padding-bottom: 8px; }
+      .release { scroll-margin-top: 24px; }
+      .release.is-current .tag { color: var(--accent); }
+      .release.is-current .meta::before {
+        background: var(--accent);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+      }
+      .permalink {
+        color: var(--text-4);
+        font-family: var(--mono);
+        font-size: 15px;
+        opacity: 0;
+        transition: opacity .15s ease, color .15s ease;
+      }
+      .meta:hover .permalink, .permalink:focus-visible { opacity: 1; }
+      .permalink:hover { color: var(--accent); }
+
+      .meta {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+      .tag {
+        font-family: var(--mono);
+        font-size: 17px;
+        font-weight: 600;
+        color: #f0f2f5;
+        transition: color .15s ease;
+      }
+      .tag:hover { color: var(--accent); }
+      .badge {
+        font-size: 10.5px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 3px 7px;
+        border-radius: 5px;
+        color: var(--warn);
+        background: color-mix(in srgb, var(--warn) 12%, transparent);
+      }
+      .date { color: var(--text-4); font-size: 12.5px; margin-left: auto; }
+
+      /* Rendered release notes (GitHub-flavored markdown → HTML by the GitHub API). */
+      .notes { color: var(--text-2); font-size: 14px; line-height: 1.7; }
+      .notes > :first-child { margin-top: 0; }
+      .notes > :last-child { margin-bottom: 0; }
+      .notes h1, .notes h2, .notes h3, .notes h4 {
+        margin: 18px 0 6px;
+        color: var(--text);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .notes .anchor { display: none; }
+      .notes p { margin: 8px 0; }
+      .notes ul, .notes ol { margin: 6px 0; padding-left: 20px; }
+      .notes li { margin: 3px 0; }
+      .notes li::marker { color: var(--text-4); }
+      .notes strong { color: var(--text); font-weight: 600; }
+      .notes a { color: var(--accent); }
+      .notes a:hover { text-decoration: underline; }
+      .notes code {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        padding: 1px 5px;
+        border-radius: 4px;
+        background: var(--surface-2);
+        color: var(--text);
+      }
+      .notes pre {
+        overflow-x: auto;
+        padding: 12px 14px;
+        border-radius: 8px;
+        background: var(--surface-2);
+        border: 1px solid var(--border-2);
+      }
+      .notes pre code { padding: 0; background: none; }
+      .notes blockquote {
+        margin: 8px 0;
+        padding: 2px 14px;
+        border-left: 2px solid var(--border-2);
+        color: var(--text-3);
+      }
+      .notes img { max-width: 100%; }
+      .notes hr { border: 0; border-top: 1px solid var(--border); margin: 16px 0; }
+      .notes table { border-collapse: collapse; }
+      .notes th, .notes td { padding: 4px 10px; border: 1px solid var(--border-2); }
+      .empty { color: var(--text-4); font-style: italic; }
+
+      /* Version index, pinned to the right of the window on wide screens. Fixed rather than in
+         the grid so the window keeps its place and width; below 1160px there is no room and it
+         goes away (the rail dots still show where you are). */
+      .toc {
+        position: fixed;
+        top: 24px;
+        left: calc(50% + 380px + 28px);
+        max-height: calc(100vh - 48px);
+        overflow-y: auto;
+        display: none;
+        flex-direction: column;
+        gap: 2px;
+        padding: 10px 0;
+        font-family: var(--mono);
+        font-size: 12px;
+        scrollbar-width: none;
+      }
+      .toc::-webkit-scrollbar { display: none; }
+      @media (min-width: 1160px) { .toc.ready { display: flex; } }
+      .toc-title {
+        padding: 0 12px 8px;
+        color: var(--text-4);
+        font-family: var(--sans);
+        font-size: 10.5px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .toc a {
+        padding: 4px 12px;
+        border-left: 2px solid transparent;
+        color: var(--text-3);
+        white-space: nowrap;
+        transition: color .15s ease, border-color .15s ease;
+      }
+      .toc a:hover { color: var(--text); }
+      .toc a.is-current { color: var(--accent); border-color: var(--accent); }
+
+      .footer {
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 0 18px;
+        border-top: 1px solid var(--border);
+        color: var(--text-4);
+        font-size: 11px;
+      }
+      .footer a { color: var(--text-3); }
+      .footer a:hover { color: var(--text-2); }
+      .footer .sep { margin: 0 8px; opacity: .45; }
+
+      @media (max-width: 560px) {
+        body { padding: 14px; }
+        .titlebar { grid-template-columns: auto 1fr auto; padding: 0 10px; }
+        .title { justify-self: center; }
+        .content { padding: 30px 20px 26px; }
+        h1 { font-size: 24px; }
+        .release { padding-left: 20px; }
+        .meta::before { left: -27px; }
+        .date { margin-left: 0; width: 100%; }
+        .footer { align-items: flex-start; height: auto; flex-direction: column; padding: 14px 16px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="window" aria-label="FreeToken changelog">
+      <div class="titlebar">
+        <div class="dots" aria-hidden="true">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+        </div>
+        <div class="title">FreeToken</div>
+        <div class="lang" role="group" aria-label="Language">
+          <button type="button" class="lang-btn" data-lang="zh">中文</button>
+          <button type="button" class="lang-btn" data-lang="en">EN</button>
+        </div>
+      </div>
+
+      <section class="content">
+        <div class="head">
+          <h1 id="heading">Changelog</h1>
+          <a class="back" id="back" href="../">← Download</a>
+        </div>
+        <p class="status" id="status">Loading…</p>
+        <ol class="list" id="list"></ol>
+      </section>
+
+      <footer class="footer">
+        <span id="tagline">FreeToken · Bring Frontier to Edge</span>
+        <span id="links"></span>
+      </footer>
+    </main>
+    <nav class="toc" id="toc" aria-label="Versions"></nav>
+
+    <script>
+      const GH_ORG  = "FlashML-org";
+      const GH_REPO = "FreeToken-Web";
+      const REL = `https://github.com/${GH_ORG}/${GH_REPO}/releases`;
+      const GH_ENGINE = `https://github.com/${GH_ORG}/FreeToken`;
+
+      const I18N = {
+        zh: {
+          htmlLang: "zh-CN",
+          title: "FreeToken 更新日志 | FlashML",
+          heading: "更新日志",
+          back: "← 返回下载",
+          loading: "加载中…",
+          unavailable: `更新日志暂时无法加载，请前往 <a href="${REL}">GitHub Releases</a> 查看。`,
+          prerelease: "预发布",
+          versions: "版本",
+          stable: "正式版",
+          empty: "此版本没有更新说明。",
+          tagline: "FreeToken · 前沿智能, 触手可及",
+          source: "引擎源码",
+          releases: "全部版本",
+          dateLocale: "zh-CN",
+        },
+        en: {
+          htmlLang: "en",
+          title: "FreeToken Changelog | FlashML",
+          heading: "Changelog",
+          back: "← Download",
+          loading: "Loading…",
+          unavailable: `The changelog could not be loaded. See <a href="${REL}">GitHub Releases</a>.`,
+          prerelease: "Pre-release",
+          versions: "Versions",
+          stable: "Stable",
+          empty: "No release notes for this version.",
+          tagline: "FreeToken · Bring Frontier to Edge",
+          source: "Engine source",
+          releases: "Releases",
+          dateLocale: "en-US",
+        },
+      };
+
+      function pickLang() {
+        try {
+          const saved = localStorage.getItem("ft-lang");
+          if (saved === "zh" || saved === "en") return saved;
+        } catch (_) {}
+        return /^zh/i.test(navigator.language || "") ? "zh" : "en";
+      }
+      let lang = pickLang();
+      let releases = null;
+      let failed = false;
+
+      const statusEl = document.getElementById("status");
+      const listEl = document.getElementById("list");
+      const tocEl = document.getElementById("toc");
+
+      function renderList(t) {
+        if (!releases) return;
+        // The stable badge and the dimmed index entries only mean something once both kinds
+        // of release exist; with prereleases alone they would just be noise.
+        const mixed = releases.some(r => r.prerelease) && releases.some(r => !r.prerelease);
+        const fmt = new Intl.DateTimeFormat(t.dateLocale, { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" });
+        listEl.innerHTML = releases.map(r => `
+          <li class="release" id="${r.tag}">
+            <div class="meta">
+              <a class="tag" href="${r.url}">${r.tag}</a>
+              <a class="permalink" href="#${r.tag}" aria-label="${r.tag}">#</a>
+              ${r.prerelease ? `<span class="badge">${t.prerelease}</span>`
+                             : mixed ? `<span class="badge stable">${t.stable}</span>` : ""}
+              <time class="date" datetime="${r.date}">${fmt.format(new Date(r.date))}</time>
+            </div>
+            <div class="notes">${r.html || `<p class="empty">${t.empty}</p>`}</div>
+          </li>`).join("");
+        tocEl.innerHTML = `<span class="toc-title">${t.versions}</span>` +
+          releases.map(r => `<a href="#${r.tag}" data-tag="${r.tag}"${mixed && r.prerelease ? ' class="pre"' : ""}>${r.tag}</a>`).join("");
+        tocEl.classList.add("ready");
+        // A language switch rebuilds the list; point both the lit entry and the jump pin at
+        // the fresh nodes, or the old detached ones would keep being scrolled and styled.
+        if (pinned) pinned = document.getElementById(pinned.id);
+        if (current) {
+          const fresh = document.getElementById(current.id);
+          current = null;
+          setCurrent(fresh);
+        }
+      }
+
+      function applyLang() {
+        const t = I18N[lang];
+        document.documentElement.lang = t.htmlLang;
+        document.title = t.title;
+        document.getElementById("heading").textContent = t.heading;
+        document.getElementById("back").textContent = t.back;
+        document.getElementById("tagline").textContent = t.tagline;
+        document.getElementById("links").innerHTML =
+          `<a href="${GH_ENGINE}">${t.source} ↗</a>` +
+          `<span class="sep" aria-hidden="true">·</span>` +
+          `<a href="${REL}">${t.releases} ↗</a>`;
+        document.querySelectorAll(".lang-btn").forEach(b =>
+          b.classList.toggle("active", b.dataset.lang === lang));
+        if (failed) statusEl.innerHTML = t.unavailable;
+        else if (!releases) statusEl.textContent = t.loading;
+        statusEl.hidden = !!releases;
+        renderList(t);
+      }
+
+      document.querySelectorAll(".lang-btn").forEach(b =>
+        b.addEventListener("click", () => {
+          lang = b.dataset.lang;
+          try { localStorage.setItem("ft-lang", lang); } catch (_) {}
+          applyLang();
+        }));
+
+      applyLang();
+
+      // releases.json is generated by scripts/build-changelog.py during the Pages deploy, which
+      // reruns on every desktop release (the release CI commits the new version into this repo).
+      fetch("releases.json", { cache: "no-cache" })
+        .then(r => r.ok ? r.json() : Promise.reject(new Error(r.status)))
+        .then(d => { releases = d.releases || []; })
+        .catch(() => { failed = true; })
+        .then(applyLang)
+        .then(() => { jumpToHash(); spy(); });
+
+      // A programmatic jump pins its target: the scroll-spy leaves "current" alone
+      // until the reader scrolls themselves, so the jump does not get re-pointed at whichever
+      // neighbour happens to sit nearer the reading line. Web fonts (Noto Sans SC only starts
+      // loading once the CJK dates render) land after the first jump and reflow the entries above
+      // the target, pushing it off its spot — while pinned, every font-load batch realigns.
+      let pinned = null;
+      let pinnedY = 0;
+      let alignedAt = 0;
+      function alignPinned() {
+        pinned.scrollIntoView();
+        pinnedY = scrollY;
+        alignedAt = performance.now();
+      }
+      if (document.fonts) document.fonts.addEventListener("loadingdone", () => {
+        if (pinned) alignPinned();
+      });
+
+      // #v0.2.0-beta.16 (or #0.2.0-beta.16) lands on that release. The list is rendered after
+      // the fetch, so the browser's own hash scroll has already missed; do it by hand.
+      function jumpToHash() {
+        const raw = decodeURIComponent(location.hash.slice(1));
+        if (!raw) return;
+        const el = document.getElementById(raw) || document.getElementById("v" + raw);
+        if (!el) return;
+        pinned = el;
+        setCurrent(el);
+        alignPinned();
+      }
+      window.addEventListener("hashchange", jumpToHash);
+      // Clicking the entry the hash already names fires no hashchange; jump explicitly.
+      tocEl.addEventListener("click", e => {
+        const a = e.target.closest("a");
+        if (!a) return;
+        e.preventDefault();
+        if (location.hash !== a.getAttribute("href")) history.pushState(null, "", a.getAttribute("href"));
+        jumpToHash();
+      });
+
+      // Scroll-spy: the entry whose header is nearest the reading line is "current" — its rail
+      // dot and index entry light up. The address bar is left alone; only a click changes it.
+      let current = null;
+      function setCurrent(el) {
+        if (el === current) return;
+        if (current) current.classList.remove("is-current");
+        current = el;
+        if (el) el.classList.add("is-current");
+        tocEl.querySelectorAll("a").forEach(a => {
+          const on = !!el && a.dataset.tag === el.id;
+          a.classList.toggle("is-current", on);
+          // Keep the lit entry inside the index's own scroll box. Not scrollIntoView, which
+          // would also pull the page around.
+          if (on) {
+            const lo = a.offsetTop - 40, hi = a.offsetTop + a.offsetHeight + 40 - tocEl.clientHeight;
+            if (tocEl.scrollTop > lo) tocEl.scrollTop = lo;
+            else if (tocEl.scrollTop < hi) tocEl.scrollTop = hi;
+          }
+        });
+      }
+      function spy() {
+        const entries = listEl.children;
+        if (!entries.length) return;
+        // The pin holds until the page has actually moved away from where the jump put it.
+        // Moves right after an alignment, or while web fonts are still landing, are reflow
+        // (Chrome's scroll anchoring shifts scrollY to keep content still) — realign instead.
+        if (pinned) {
+          if (Math.abs(scrollY - pinnedY) < 40) return;
+          const settling = performance.now() - alignedAt < 600 ||
+                           (document.fonts && document.fonts.status === "loading");
+          if (settling) { alignPinned(); return; }
+          pinned = null;
+        }
+        // The entry whose header was last to pass the reading line is the one being read; but
+        // if that header has scrolled off the top, light the first header still on screen, so
+        // the lit dot is always visible.
+        const line = innerHeight * 0.3;
+        let best = null, firstVisible = null;
+        for (const e of entries) {
+          const top = e.querySelector(".meta").getBoundingClientRect().top;
+          if (top <= line) best = e;
+          if (!firstVisible && top >= 0 && top < innerHeight) firstVisible = e;
+        }
+        if (!best) best = entries[0];
+        else if (best.querySelector(".meta").getBoundingClientRect().top < 0 && firstVisible) best = firstVisible;
+        setCurrent(best);
+      }
+      let spyPending = false;
+      addEventListener("scroll", () => {
+        if (spyPending) return;
+        spyPending = true;
+        requestAnimationFrame(() => { spyPending = false; spy(); });
+      }, { passive: true });
+    </script>
+  </body>
+</html>

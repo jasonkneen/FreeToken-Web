@@ -7,10 +7,16 @@ on:
       - "index.html"
       - "assets/**"
       - "update/**"      # desktop updater manifests (stable.json / beta.json)
+      - "changelog/**"
+      - "scripts/**"
       - "CNAME"
       - "robots.txt"
       - "sitemap.xml"
       - ".github/workflows/deploy-pages.yml"
+  # Release notes edited (or a release cut by hand) after the release commit landed: the
+  # changelog is built from them, so rebuild on those too.
+  release:
+    types: [published, edited, deleted]
   workflow_dispatch:
 
 permissions:
@@ -30,6 +36,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # The desktop release CI mirrors each version as a v* release here and then commits the
+      # new version into this repo, so this deploy runs after every release and rebuilds the
+      # changelog from the release notes. A GitHub API hiccup must not hold back the updater
+      # manifests: the page falls back to a link to Releases when releases.json is missing.
+      - name: Build changelog
+        id: changelog
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/build-changelog.py
+      - if: steps.changelog.outcome == 'failure'
+        run: echo "::warning::changelog build failed; the site was deployed without changelog/releases.json"
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

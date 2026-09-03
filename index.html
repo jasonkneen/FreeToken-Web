@@ -311,6 +311,25 @@
         transition: color .15s ease;
       }
       .version:hover { color: var(--text-2); }
+      /* Version + changelog share one line under the CTA. The changelog link is the page's one
+         secondary destination, so it reads in accent rather than the version's muted grey. */
+      .meta-row {
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
+        gap: 10px;
+        margin-top: 14px;
+        font-size: 12.5px;
+        letter-spacing: 0.02em;
+      }
+      .meta-row .version { margin-top: 0; }
+      .meta-row .sep { color: var(--text-4); opacity: .6; }
+      .changelog-link {
+        color: var(--accent);
+        font-weight: 500;
+        transition: filter .15s ease;
+      }
+      .changelog-link:hover { filter: brightness(1.2); text-decoration: underline; }
 
       .button {
         min-height: 42px;
@@ -452,7 +471,7 @@
         border: 0;
         background: transparent;
         cursor: pointer;
-        margin: 52px 0 0;
+        margin: 30px 0 0;
         display: inline-flex;
         align-items: center;
         gap: 7px;
@@ -599,7 +618,11 @@
               <div class="dl-menu" id="dl-menu" role="menu"></div>
             </div>
           </div>
-          <a class="version" id="version" href="#"></a>
+          <div class="meta-row">
+            <a class="version" id="version" href="#"></a>
+            <span class="sep" aria-hidden="true">·</span>
+            <a class="changelog-link" id="changelog-link" href="changelog/">Changelog →</a>
+          </div>
 
           <button type="button" class="disclosure" id="platforms-toggle"
                   aria-expanded="false" aria-controls="cards">
@@ -718,13 +741,14 @@
           </a>`).join("");
       }
 
-      // Current version (bump VERSION above per release). Links to THIS version's own release,
-      // not the rolling `beta` one: that page always describes the newest build, so following a
-      // version number landed on notes for something else the moment the next release shipped.
-      // The download buttons keep using the rolling tag, where the filenames never change.
+      // Current version (bump VERSION above per release). Links to THIS version's entry on the
+      // changelog page, not the rolling `beta` release: that page always describes the newest
+      // build, so following a version number landed on notes for something else the moment the
+      // next release shipped. The download buttons keep using the rolling tag, where the
+      // filenames never change.
       const verEl = document.getElementById("version");
       verEl.textContent = "v" + VERSION;
-      verEl.href = `${REL}/tag/${VER_TAG}`;
+      verEl.href = `changelog/#${VER_TAG}`;
 
       // ── i18n(en / zh_CN)────────────────────────────────────────
       const I18N = {
@@ -738,6 +762,7 @@
           platforms: "所有平台",
           tagline:   "FreeToken · 前沿智能, 触手可及",
           source:    "引擎源码",
+          changelog: "更新日志",
           releases:  "全部版本",
         },
         en: {
@@ -750,6 +775,7 @@
           platforms: "All platforms",
           tagline:   "FreeToken · Bring Frontier to Edge",
           source:    "Engine source",
+          changelog: "Changelog",
           releases:  "Releases",
         },
       };
@@ -770,6 +796,7 @@
         document.title = t.title;
         document.getElementById("lead").textContent = t.lead;
         document.getElementById("platforms-label").textContent = t.platforms;
+        document.getElementById("changelog-link").textContent = `${t.changelog} →`;
         const primary = document.getElementById("primary");
         if (current) {
           primary.classList.remove("is-disabled");
